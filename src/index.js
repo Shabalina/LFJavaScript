@@ -13,7 +13,7 @@
  Другими словами: функция должна возвращать в неизменном виде то, что поступает ей на вход
  */
 function returnFirstArgument(anyValue) {
-  return anyValue
+  return anyValue;
 }
 
 /*
@@ -63,7 +63,7 @@ function returnFnResult(fn) {
 function returnCounter(number) {
   number = number || 0;
   return function () {
-    return number+=1
+    return number+=1;
   }
 }
 
@@ -79,11 +79,11 @@ function returnCounter(number) {
 function returnArgumentsArray() {
   var args = [];
   for(var arg = 0; arg < arguments.length; ++ arg){
-    args.push(arguments[arg])
+    args.push(arguments[arg]);
   }
 
  // var args = Array.prototype.slice.call(arguments);
-  return args
+  return args;
 }
 
 /*
@@ -103,7 +103,7 @@ function returnArgumentsArray() {
  */
 function bindFunction(fn, ...args) {
   return function () {
-    return fn(...args)
+    return fn(...args);
     }
 }
 
