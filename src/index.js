@@ -102,7 +102,7 @@ function findError(where) {
  */
 function deleteTextNodes(where) {
   for (var child of where.childNodes) {
-    if (child.innerText != ''){
+    if (child.innerText !== ''){
       child.remove()
     }
   }
@@ -121,14 +121,16 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
-   for (var child of where.childNodes) { 
-    if (child.hasChildNodes()){
-       deleteTextNodesRecursive(child)
-      }
-    if (child.innerText != ''){
-      child.remove()
-      }
-    }
+  var kids = where.childNodes    
+  for (var i =0; i <kids.length; i++) {
+      if (kids[i].hasChildNodes()){
+        deleteTextNodesRecursive(kids[i])
+        }
+      if (kids[i].nodeType === 3){
+        kids[i].remove();
+        i--;
+      }       
+   }    
   }
 
 /*
@@ -152,6 +154,30 @@ function deleteTextNodesRecursive(where) {
    }
  */
 function collectDOMStat(root) {
+  var texts = 0;
+  var classes = {};
+  var tags = [];
+  var recTravers = function(){
+    for (var child of root.childNodes) {
+      if (child.hasChildNodes()){
+        recTravers(kids[i])
+        }
+      if (child.nodeType === 3){texts ++}
+      if (child.hasClass){
+        classes[child.className] = classes[child.className] ? classes[child.className] + 1 : 1
+        }
+      if (child.hasTag){
+        tags[child.tagName] = tags[child.tagName] ? tags[child.tagName] + 1 : 1
+        }
+      }  
+    }  
+  var stat = {
+    tags: tags,
+    classes: classes,
+    texts: texts
+  }
+
+  return stat
 }
 
 /*
