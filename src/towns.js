@@ -87,24 +87,24 @@ const filterBlock = homeworkContainer.querySelector('#filter-block');
 const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
-//var result;
+
 var prom = loadTowns();
 prom.then(function(result){
   loadingBlock.style.display = 'none';
   filterBlock.style.removeProperty('display');
   
-  filterInput.addEventListener('keyup', function() {  
+  filterInput.addEventListener('keyup', function(){  
     filterResult.innerHTML = '';
+
     for (let key in result){
-      if( isMatching(result[key].name, filterInput.value)){
-      //  console.log(result[key].name, filterInput.value)
+      if (isMatching(result[key].name, filterInput.value)){
         const resItem = document.createElement('div');
         resItem.textContent = result[key].name;
         filterResult.appendChild(resItem);
         }
       }
     })  
-  });
+  })
 
 export {
     loadTowns,
