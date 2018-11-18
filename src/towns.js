@@ -1,3 +1,5 @@
+import {loadAndSortTowns} from './index';
+
 /*
  Страница должна предварительно загрузить список городов из
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
@@ -37,35 +39,7 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
-  function sortOn(property){
-    return function(a, b){
-        if (a[property] < b[property]){
-            return -1;
-        }else if (a[property] > b[property]){
-            return 1;
-        } else {
-            return 0;   
-        }
-    }
-}
-
-return new Promise(function(resolve, reject){
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json', true);    
-  xhr.onload = function(){
-      if (xhr.status >= 400){
-        // обработать ошибку
-        console.log(xhr.status + ': ' + xhr.statusText); 
-      } else {
-        var cities = JSON.parse(xhr.responseText);
-        resolve(cities.sort(sortOn("name")));
-      }        
-  }
-  xhr.onerror = function(){
-    reject(new Error("Network Error"));
-  }
-  xhr.send();
-})  
+  return loadAndSortTowns();
 }
 
 /*
