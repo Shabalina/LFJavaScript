@@ -1,4 +1,3 @@
-import {isMatching} from './towns';
 /*
  ДЗ 7 - Создать редактор cookie с возможностью фильтрации
 
@@ -44,101 +43,144 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
+function isMatching (full, chunk) {  
+    function checkMatch (index) {
+        for (var char of chunkArr) {
+            if (fullArr[index] !== char) {
+                return false;
+            }
+            index++;
+        }
+        
+        return true;
+    }
 
-function isCookieNameSet(inputName){  
-    var name =  inputName + '=';
+    var fullArr = full.toUpperCase().split('');
+    var chunkArr = chunk.toUpperCase().split('');
+
+    for (var i = 0; i< fullArr.length; i++) {
+        if (chunkArr[0] === fullArr[i]) {
+            if (fullArr.lenght - i < chunkArr.length) {
+                return false;
+            }
+            if (checkMatch(i)) {
+                return true;
+            }
+        }
+    }
+
+    return false;  
+}
+
+function isCookieNameSet (inputName) {  
+    var name = inputName + '=';
     var cookieList = document.cookie.split(';');
-    for(var i = 0; i <cookieList.length; i++){
+
+    for (var i = 0; i <cookieList.length; i++) {
         var c = cookieList[i];
-        while (c.charAt(0) === ' '){
+
+        while (c.charAt(0) === ' ') {
             c = c.substring(1);
         }
-        if (c.indexOf(name) === 0){
+        if (c.indexOf(name) === 0) {
             return i;
         }
     }
+
     return false;
-  }    
+}    
 
-function addNewRow (name, value){   
-  var newRow = listTable.insertRow(-1);
-  var nameCell = newRow.insertCell(0);
-  var valCell = newRow.insertCell(1);
-  var delCell = newRow.insertCell(2);  
-  nameCell.innerHTML = name;
-  valCell.innerHTML = value;
-  var delButton = document.createElement('BUTTON');
-  delButton.innerHTML = 'Delete';  
-  delButton.onclick = function(event){
-      var target = event.target;
-      cookieDel(target.closest('tr').cells[0].innerHTML);
-      target.closest('tr').remove(); 
-      }
-  delCell.appendChild(delButton);     
-}
+function addNewRow (name, value) {   
+    var newRow = listTable.insertRow(-1);
+    var nameCell = newRow.insertCell(0);
+    var valCell = newRow.insertCell(1);
+    var delCell = newRow.insertCell(2);  
 
-function clearTable(){
-  for (var i=0; i <listTable.rows.length;){
-    listTable.deleteRow(i);
-  }
-  return;
-}
+    nameCell.innerHTML = name;
+    valCell.innerHTML = value;
+    var delButton = document.createElement('BUTTON');
 
-function editTable(row, value){
-  listTable.rows[row].cells[1].innerHTML = value;
-}
+    delButton.innerHTML = 'Delete';  
+    delButton.onclick = function (event) {
+        var target = event.target;
 
-function cookieDel(delName){
-document.cookie = delName + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
-}
-
-function dressCode(chunk){
-  if (document.cookie){
-    clearTable();
-    var cookieList = document.cookie.split('; ');
-    for (let cookie of cookieList){
-      if (isMatching(cookie, chunk)){
-        var [name, value] = cookie.split('=');
-        addNewRow(name, value);
-      }
+        cookieDel(target.closest('tr').cells[0].innerHTML);
+        target.closest('tr').remove(); 
     }
-  }
+    delCell.appendChild(delButton);     
 }
 
-function createDefaultTable(){
-  if (document.cookie){    
-    clearTable();
-    let cookieList = document.cookie.split('; ');
-    for (let cookie of cookieList){
-        var [name, value] = cookie.split('=');
-        addNewRow(name, value);
+function clearTable() {
+    for (var i=0; i <listTable.rows.length;) {
+        listTable.deleteRow(i);
     }
-  }
-}
 
-filterNameInput.addEventListener('keyup', function() {   
-  if (!filterNameInput.value){
-    createDefaultTable()
     return;
-  }
-  dressCode(filterNameInput.value);
-  })
+}
+
+function editTable(row, value) {
+    listTable.rows[row].cells[1].innerHTML = value;
+}
+
+function cookieDel (delName) {
+    document.cookie = delName + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+}
+
+function dressCode (chunk) {
+    if (document.cookie) {
+        clearTable();
+        var cookieList = document.cookie.split('; ');
+
+        for (let cookie of cookieList) {
+            if (isMatching (cookie, chunk)) {
+                var [name, value] = cookie.split('=');
+
+                addNewRow (name, value);
+            }
+        }
+    }
+}
+
+function createDefaultTable() {
+    if (document.cookie) {    
+        clearTable();
+        let cookieList = document.cookie.split('; ');
+
+        for (let cookie of cookieList) {
+            var [name, value] = cookie.split('=');
+
+            addNewRow (name, value);
+        }
+    }
+}
+
+filterNameInput.addEventListener ('keyup', function() {   
+    if (!filterNameInput.value) {
+        createDefaultTable();
+
+        return;
+    }
+    dressCode(filterNameInput.value);
+})
 
 addButton.addEventListener('click', () => {
-  if (filterNameInput.value){
-    document.cookie = `${addNameInput.value}=${addValueInput.value}`; 
-    dressCode(filterNameInput.value);
-    return;
-  }
-  if (document.cookie){
-    var cookieRow = isCookieNameSet(addNameInput.value);
-    if (cookieRow){
+    if (filterNameInput.value) {
         document.cookie = `${addNameInput.value}=${addValueInput.value}`; 
-        editTable(cookieRow, addValueInput.value);
+        dressCode (filterNameInput.value);
+
         return;
-    }    
-  }
-  document.cookie = `${addNameInput.value}=${addValueInput.value}`; 
-  addNewRow(addNameInput.value, addValueInput.value);
+    }
+    if (document.cookie) {
+        var cookieRow = isCookieNameSet (addNameInput.value);
+
+        if (cookieRow) {
+            document.cookie = `${addNameInput.value}=${addValueInput.value}`; 
+            editTable (cookieRow, addValueInput.value);
+
+            return;
+        }    
+    }
+    document.cookie = `${addNameInput.value}=${addValueInput.value}`; 
+    addNewRow (addNameInput.value, addValueInput.value);
 });
 
